@@ -88,5 +88,60 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../js/main.js"></script>
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.querySelector('form');
+
+  if (!form) return;
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const email = form.querySelector('input[type="email"]');
+    const pass  = form.querySelector('input[type="password"]');
+
+    let valid = true;
+
+    // Validar email
+    if (email && !/\S+@\S+\.\S+/.test(email.value)) {
+      showError(email, "Ingresa un correo electrónico válido");
+      valid = false;
+    } else {
+      clearError(email);
+    }
+
+    // Validar password
+    if (pass && pass.value.length < 6) {
+      showError(pass, "La contraseña debe tener al menos 6 caracteres");
+      valid = false;
+    } else {
+      clearError(pass);
+    }
+
+    if (valid) {
+      form.submit(); // Solo si todo es válido
+    }
+  });
+
+  function showError(input, msg) {
+    input.classList.add('is-invalid');
+    let feedback = input.nextElementSibling;
+    if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+      feedback = document.createElement('div');
+      feedback.className = 'invalid-feedback';
+      input.parentNode.insertBefore(feedback, input.nextSibling);
+    }
+    feedback.textContent = msg;
+  }
+
+  function clearError(input) {
+    input.classList.remove('is-invalid');
+    let feedback = input.nextElementSibling;
+    if (feedback && feedback.classList.contains('invalid-feedback')) {
+      feedback.remove();
+    }
+  }
+});
+</script>
+
 </body>
 </html>
