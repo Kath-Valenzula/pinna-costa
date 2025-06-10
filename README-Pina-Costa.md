@@ -87,6 +87,3 @@ GitHub: [@Kath-Valenzula](https://github.com/Kath-Valenzula)
 
 ---
 
-## 📜 Licencia
-
-Este proyecto ha sido desarrollado con fines educativos en el contexto de la asignatura **Desarrollo Full Stack II (DSY2202)**, bajo supervisión del docente **Víctor Rosendo** y del asesor par **Alonso Castillo**. Todos los derechos reservados.
