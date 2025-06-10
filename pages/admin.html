@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel Admin | Piña Costa</title>
+  <!-- Bootstrap & Google Fonts -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet"/>
+  <!-- Estilos -->
+  <link rel="stylesheet" href="../css/estilos.css"/>
+
+  <script>
+    // si no estás logueado como admin, vuelve al login
+    if (sessionStorage.getItem('adminLogged') !== 'true') {
+      window.location.href = 'admin-login.html';
+    }
+  </script>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="../index.html">
+      <img src="../img/logo.jpg" alt="Piña Costa" height="40">
+    </a>
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#pageNav"
+            aria-controls="pageNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="pageNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="../index.html">Inicio</a></li>
+        <li class="nav-item"><a class="nav-link" href="../acerca.html">Acerca de</a></li>
+        <li class="nav-item"><a class="nav-link" href="../catalogo.html">Productos</a></li>
+        <li class="nav-item"><a class="nav-link" href="../contacto.html">Contacto</a></li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="cart.html">
+            Carrito <span id="cartCount" class="badge cart-badge">0</span>
+          </a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="perfilDropdown" data-bs-toggle="dropdown">
+            Perfil
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="perfilDropdown">
+            <li><a class="dropdown-item" href="login.html">Login</a></li>
+            <li><a class="dropdown-item" href="registro.html">Registro</a></li>
+            <li><a class="dropdown-item" href="recuperar.html">Recuperar Cuenta</a></li>
+          </ul>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="admin-login.html">Admin</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  <main class="container py-5">
+
+    <!--  PERFIL DE ADMIN -->
+    <section class="mb-5">
+      <h1 class="mb-3">Panel de Administración</h1>
+      <p>Bienvenido, <strong>Admin</strong>. Desde aquí gestionas usuarios y productos.</p>
+      <a href="create-user.html" class="btn btn-primary rounded-pill">Crear Usuario</a>
+    </section>
+
+    <!--  LISTADO DE USUARIOS -->
+    <section class="mb-5">
+      <h2 class="h4 mb-3">Usuarios Registrados</h2>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr><th>ID</th><th>Nombre</th><th>Email</th><th>Rol</th><th>Acciones</th></tr>
+          </thead>
+          <tbody id="usersTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!--  GESTIÓN DE PRODUCTOS -->
+    <section>
+      <h2 class="h4 mb-3">Productos</h2>
+
+      <!-- Tabla de productos -->
+      <div class="table-responsive mb-4">
+        <table class="table table-bordered table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th><th>Nombre</th><th>Imagen</th><th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody id="productsTable"></tbody>
+        </table>
+      </div>
+
+      <!-- Formulario para añadir producto -->
+      <h3 class="h5 mb-2">Agregar Nuevo Producto</h3>
+      <form id="addProductForm" class="row g-3">
+
+        <div class="col-md-4">
+          <label for="prodName" class="form-label">Nombre *</label>
+          <input type="text" id="prodName" class="form-control" required>
+          <div class="invalid-feedback">Debe ingresar un nombre.</div>
+        </div>
+
+        <div class="col-md-4">
+          <label for="prodImage" class="form-label">URL Imagen *</label>
+          <input type="url" id="prodImage" class="form-control" placeholder="img/ejemplo.jpg" required>
+          <div class="invalid-feedback">Debe ingresar la ruta de la imagen.</div>
+        </div>
+
+        <div class="col-md-4">
+          <label for="prodDesc" class="form-label">Descripción *</label>
+          <input type="text" id="prodDesc" class="form-control" required>
+          <div class="invalid-feedback">Debe ingresar una descripción.</div>
+        </div>
+
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary rounded-pill">Añadir Producto</button>
+        </div>
+      </form>
+    </section>
+
+  </main>
+
+  <!-- Bootstrap JS + lógica -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // --- Usuarios ---
+    const users = [
+      { id: 1, name: 'Katherine', email: 'ka.valenzuelam@duocuc.cl', role: 'Usuario' },
+      { id: 2, name: 'Miguel',    email: 'm.hernandez@example.com',   role: 'Usuario' },
+      { id: 99, name: 'Admin',    email: 'admin@example.com',         role: 'Administrador' }
+    ];
+    const tbodyUsers = document.getElementById('usersTable');
+    users.forEach(u => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${u.id}</td>
+        <td>${u.name}</td>
+        <td>${u.email}</td>
+        <td>${u.role}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-secondary">Editar</button>
+          <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+        </td>`;
+      tbodyUsers.appendChild(tr);
+    });
+
+    // --- Gestión de Productos ---
+    // Carga inicial: desde localStorage o con un array por defecto
+    const defaultProducts = JSON.parse(localStorage.getItem('products')) || [
+      { id: 1, name: 'Vestido Rosa Elegante', image: '../img/vestido-rosa.jpg', description: 'Luce espectacular con nuestro vestido rosa de diseño elegante.' }
+    ];
+    let products = defaultProducts;
+
+    // Función de render
+    function renderProducts() {
+      const tbodyP = document.getElementById('productsTable');
+      tbodyP.innerHTML = '';
+      products.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${p.id}</td>
+          <td>${p.name}</td>
+          <td><img src="${p.image}" alt="${p.name}" height="50"></td>
+          <td>${p.description}</td>`;
+        tbodyP.appendChild(tr);
+      });
+    }
+    renderProducts();
+
+    // Añadir producto desde el formulario
+    const formP = document.getElementById('addProductForm');
+    formP.addEventListener('submit', e => {
+      e.preventDefault();
+      formP.classList.add('was-validated');
+      if (!formP.checkValidity()) return;
+      const name = document.getElementById('prodName').value.trim();
+      const image = document.getElementById('prodImage').value.trim();
+      const desc = document.getElementById('prodDesc').value.trim();
+      const newId = products.length ? Math.max(...products.map(x=>x.id)) + 1 : 1;
+      products.push({ id: newId, name, image, description: desc });
+      localStorage.setItem('products', JSON.stringify(products));
+      renderProducts();
+      formP.reset();
+      formP.classList.remove('was-validated');
+    });
+  </script>
+</body>
+</html>
